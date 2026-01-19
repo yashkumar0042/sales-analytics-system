@@ -1,18 +1,226 @@
-def enrich_products(records):
-    product_map = {
-        "P101": "Laptop",
-        "P102": "Mouse",
-        "P103": "Keyboard",
-        "P104": "Monitor",
-        "P105": "Webcam",
-        "P106": "Headphones",
-        "P107": "USB Cable",
-        "P108": "Hard Drive",
-        "P109": "Wireless Mouse",
-        "P110": "Charger"
+from typing import Any, Dict, List, Optional
+import os
+
+import requests
+
+
+BASE_URL = "https://dummyjson.com/products"
+
+
+def fetch_all_products() -> List[Dict[str, Any]]:
+    """
+    Fetches all products from DummyJSON API
+
+    Returns: list of product dictionaries
+
+    Requirements:
+    - Fetch all available products (use limit=100)
+    - Handle connection errors with try-except
+    - Return empty list if API fails
+    - Print status message (success/failure)
+    """
+    try:
+        url = f"{BASE_URL}?limit=100"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+
+        # DummyJSON returns {"products": [...], "total": ..., ...}
+        products = data.get("products", [])
+        if not isinstance(products, list):
+            print("API fetch failed: invalid response format")
+            return []
+
+        print(f"Successfully fetched {len(products)} products from API")
+        return products
+
+    except Exception as e:
+        print(f"API fetch failed: {e}")
+        return []
+
+
+def create_product_mapping(api_products: List[Dict[str, Any]]) -> Dict[int, Dict[str, Any]]:
+    """
+    Creates a mapping of product IDs to product info
+
+    Parameters: api_products from fetch_all_products()
+
+    Returns: dictionary mapping product IDs to info
+
+    Expected Output Format:
+    {
+      1: {'title': 'iPhone 9', 'category': 'smartphones', 'brand': 'Apple', 'rating': 4.69},
+      2: {...}
+    }
+    """
+    mapping: Dict[int, Dict[str, Any]] = {}
+
+    for p in api_products:
+        try:
+            pid = int(p.get("id"))
+        except Exception:
+            continue
+
+        mapping[pid] = {
+            "title": p.get("title"),
+            "category": p.get("category"),
+            "brand": p.get("brand"),
+            "rating": p.get("rating"),
+        }
+
+    return mapping
+
+
+def _extract_numeric_product_id(product_id_str: Optional[str]) -> Optional[int]:
+    """
+    Extract numeric ID from ProductID string
+    Examples:
+      P101 -> 101
+      P5 -> 5
+    """
+    if not product_id_str:
+        return None
+
+    s = str(product_id_str).strip()
+    if not s:
+        return None
+
+    # keep only digits
+    digits = "".join(ch for ch in s if ch.isdigit())
+    if not digits:
+        return None
+
+    try:
+        return int(digits)
+    except Exception:
+        return None
+
+
+def enrich_sales_data(
+    transactions: List[Dict[str, Any]],
+    product_mapping: Dict[int, Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Enriches transaction data with API product information
+
+    Parameters:
+    - transactions: list of transaction dictionaries
+    - product_mapping: dictionary from create_product_mapping()
+
+    Returns: list of enriched transaction dictionaries
+
+    Expected Output Format (each transaction):
+    {
+      'TransactionID': 'T001',
+      'Date': '2024-12-01',
+      'ProductID': 'P101',
+      'ProductName': 'Laptop',
+      'Quantity': 2,
+      'UnitPrice': 45000.0,
+      'CustomerID': 'C001',
+      'Region': 'North',
+
+      # NEW FIELDS ADDED FROM API:
+      'API_Category': 'laptops',
+      'API_Brand': 'Apple',
+      'API_Rating': 4.7,
+      'API_Match': True   # True if enrichment successful, False otherwise
     }
 
-    for r in records:
-        r["ProductCategory"] = product_map.get(r["ProductID"], "Other")
+    Enrichment Logic:
+    - Extract numeric ID from ProductID (P101 -> 101, P5 -> 5)
+    - If ID exists in product_mapping, add API fields
+    - If doesn't exist, set API_Match to False and other fields to None
+    - Handle all errors gracefully
 
-    return records
+    File Output:
+    - Save enriched data to 'data/enriched_sales_data.txt'
+    - Use same pipe-delimited format
+    - Include new columns in header
+    """
+    enriched: List[Dict[str, Any]] = []
+
+    for t in transactions:
+        # copy original transaction
+        row = dict(t)
+
+        try:
+            numeric_id = _extract_numeric_product_id(row.get("ProductID"))
+            api_info = product_mapping.get(numeric_id) if numeric_id is not None else None
+
+            if api_info:
+                row["API_Category"] = api_info.get("category")
+                row["API_Brand"] = api_info.get("brand")
+                row["API_Rating"] = api_info.get("rating")
+                row["API_Match"] = True
+            else:
+                row["API_Category"] = None
+                row["API_Brand"] = None
+                row["API_Rating"] = None
+                row["API_Match"] = False
+
+        except Exception:
+            # any unexpected issue => mark no match
+            row["API_Category"] = None
+            row["API_Brand"] = None
+            row["API_Rating"] = None
+            row["API_Match"] = False
+
+        enriched.append(row)
+
+    # Save to file as required
+    save_enriched_data(enriched, filename="data/enriched_sales_data.txt")
+
+    return enriched
+
+
+def save_enriched_data(
+    enriched_transactions: List[Dict[str, Any]],
+    filename: str = "data/enriched_sales_data.txt",
+) -> None:
+    """
+    Saves enriched transactions back to file
+
+    Expected File Format (pipe-delimited):
+    TransactionID|Date|ProductID|ProductName|Quantity|UnitPrice|CustomerID|Region|API_Category|API_Brand|API_Rating|API_Match
+    T001|2024-12-01|P101|Laptop|2|45000.0|C001|North|laptops|Apple|4.7|True
+    ...
+
+    Requirements:
+    - Create output file with all original + new fields
+    - Use pipe delimiter
+    - Handle None values appropriately
+    """
+    # ensure folder exists
+    folder = os.path.dirname(filename)
+    if folder:
+        os.makedirs(folder, exist_ok=True)
+
+    header_fields = [
+        "TransactionID",
+        "Date",
+        "ProductID",
+        "ProductName",
+        "Quantity",
+        "UnitPrice",
+        "CustomerID",
+        "Region",
+        "API_Category",
+        "API_Brand",
+        "API_Rating",
+        "API_Match",
+    ]
+
+    def fmt(v: Any) -> str:
+        if v is None:
+            return ""
+        if isinstance(v, bool):
+            return "True" if v else "False"
+        return str(v)
+
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write("|".join(header_fields) + "\n")
+        for t in enriched_transactions:
+            row = [fmt(t.get(col)) for col in header_fields]
+            f.write("|".join(row) + "\n")
