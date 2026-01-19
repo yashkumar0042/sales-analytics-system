@@ -1,4 +1,4 @@
-# 📊 Sales Analytics System
+#  Sales Analytics System
 
 A Python-based Sales Analytics System that processes raw transaction data, enriches it using an external API, performs detailed sales analysis, and generates comprehensive text-based reports.
 
@@ -6,7 +6,7 @@ This project is structured as a modular analytics pipeline and is fully aligned 
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```text
 sales-analytics-system/
@@ -30,9 +30,7 @@ sales-analytics-system/
     └── report_generator.py
 
 
----
-
-## 🧩 Module Responsibilities
+## Module Responsibilities
 
 | File | Description |
 |-----|-------------|
@@ -46,7 +44,7 @@ sales-analytics-system/
 
 ---
 
-## 📦 Prerequisites
+##  Prerequisites
 
 - Python **3.8 or higher**
 - Active internet connection (for DummyJSON API)
@@ -54,7 +52,7 @@ sales-analytics-system/
 
 ---
 
-## 🚀 How to Execute the Project
+##  How to Execute the Project
 
 ### Step 1: Navigate to Project Root
 
@@ -87,7 +85,7 @@ Ensure the following file exists:
 
 ---
 
-## 🛡️ Error Handling
+##  Error Handling
 
 - Gracefully handles invalid or malformed records
 - API failures do not crash the program
@@ -96,9 +94,9 @@ Ensure the following file exists:
 
 ---
 
-## 🧪 Common Issues & Fixes
+##  Common Issues & Fixes
 
-### ❌ ModuleNotFoundError
+###  ModuleNotFoundError
 
 Ensure:
 - `utils/__init__.py` exists
@@ -106,7 +104,7 @@ Ensure:
 
 ---
 
-### ❌ API Connection Issues
+###  API Connection Issues
 
 Ensure:
 - Internet connection is active
@@ -114,7 +112,7 @@ Ensure:
 
 ---
 
-## 🏁 Final Notes
+##  Final Notes
 
 - Modular and scalable code structure
 - Clean separation of concerns
@@ -122,7 +120,3 @@ Ensure:
 - Easy to extend with additional analytics and reporting
 
 ---
-
-**Author**  
-Sales Analytics Assignment – Masai School  
-Python | Data Processing | API Integration | Reporting
