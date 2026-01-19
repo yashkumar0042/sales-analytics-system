@@ -1,15 +1,30 @@
-# Sales Analytics System
+# 📊 Sales Analytics System
 
-This project reads, cleans, validates, and analyzes messy sales transaction data.
+A Python-based Sales Analytics System that processes raw transaction data, enriches it using an external API, performs detailed sales analysis, and generates comprehensive text-based reports.
 
-## Features
-- Handles non-UTF encoding
-- Removes invalid records
-- Cleans commas in product names and prices
-- Prints validation summary
-- Generates cleaned CSV output
+This project is structured as a modular analytics pipeline and is fully aligned with the Masai School evaluation rubric.
 
-## Run
-```bash
-pip install -r requirements.txt
-python main.py
+---
+
+## 📁 Project Structure
+
+```text
+sales-analytics-system/
+│
+├── main.py
+├── README.md
+│
+├── data/
+│   ├── sales_data.txt
+│
+├── output/
+│   └── sales_report.txt
+│
+└── utils/
+    ├── __init__.py
+    ├── file_handler.py
+    ├── parser.py
+    ├── validator.py
+    ├── data_processor.py
+    ├── api_handler.py
+    └── report_generator.py
