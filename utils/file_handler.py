@@ -3,9 +3,6 @@ from typing import List, Dict, Tuple, Optional
 def read_sales_data(filename: str) -> List[str]:
     """
     Reads sales data from file handling encoding issues
-
-    Returns: list of raw lines (strings)
-
     """
     encodings = ["utf-8", "latin-1", "cp1252"]
     last_error = None
@@ -61,10 +58,6 @@ def _to_float(value: str) -> Optional[float]:
 def parse_transactions(raw_lines: List[str]) -> List[Dict]:
     """
     Parses raw lines into clean list of dictionaries
-
-    Returns: list of dictionaries with keys:
-    ['TransactionID','Date','ProductID','ProductName','Quantity','UnitPrice','CustomerID','Region']
-
     """
     parsed: List[Dict] = []
 
@@ -115,9 +108,6 @@ def validate_and_filter(
 ) -> Tuple[List[Dict], int, Dict]:
     """
     Validates transactions and applies optional filters.
-
-    Returns:
-      (valid_filtered_transactions, invalid_count, filter_summary)
     """
 
     total_input = len(transactions)

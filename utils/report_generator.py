@@ -48,8 +48,7 @@ def generate_sales_report(
 
     def write_table(headers: List[str], rows: List[List[str]], widths: List[int]) -> str:
         """
-        Simple fixed-width table generator (left for text cols, right for numeric cols).
-        We'll right-align columns that look numeric by header name.
+        Simple fixed-width table generator
         """
         numeric_headers = {"Sales", "Revenue", "Total Spent", "Qty", "Quantity Sold", "% of Total", "Transactions", "Order Count", "Unique Customers"}
         out = []

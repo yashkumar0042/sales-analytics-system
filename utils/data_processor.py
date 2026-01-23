@@ -12,10 +12,6 @@ def _amount(t: Dict[str, Any]) -> float:
 def calculate_total_revenue(transactions: List[Dict[str, Any]]) -> float:
     """
     Calculates total revenue from all transactions
-
-    Returns: float (total revenue)
-
-    Expected Output: Single number representing sum of (Quantity * UnitPrice)
     """
     total = 0.0
     for t in transactions:
@@ -26,14 +22,6 @@ def calculate_total_revenue(transactions: List[Dict[str, Any]]) -> float:
 def region_wise_sales(transactions: List[Dict[str, Any]]) -> Dict[str, Dict[str, float]]:
     """
     Analyzes sales by region
-
-    Returns: dictionary with region statistics
-
-    Output format (recommended):
-    {
-      'North': {'total_revenue': 12345.0, 'transaction_count': 10, 'avg_order_value': 1234.5},
-      ...
-    }
     """
     stats: Dict[str, Dict[str, float]] = {}
 
@@ -61,21 +49,6 @@ def region_wise_sales(transactions: List[Dict[str, Any]]) -> Dict[str, Dict[str,
 def top_selling_products(transactions: List[Dict[str, Any]], n: int = 5) -> List[Tuple[str, int, float]]:
     """
     Finds top n products by total quantity sold
-
-    Returns: list of tuples
-
-    Expected Output Format:
-    [
-      ('Laptop', 45, 225000.0),   # (ProductName, TotalQuantity, TotalRevenue)
-      ...
-    ]
-
-    Requirements:
-    - Aggregate by ProductName
-    - Calculate total quantity sold
-    - Calculate total revenue for each product
-    - Sort by TotalQuantity descending
-    - Return top n products
     """
     agg: Dict[str, Dict[str, float]] = {}
 
@@ -107,26 +80,6 @@ def top_selling_products(transactions: List[Dict[str, Any]], n: int = 5) -> List
 def customer_analysis(transactions: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
     """
     Analyzes customer purchase patterns
-
-    Returns: dictionary of customer statistics
-
-    Expected Output Format:
-    {
-      'C001': {
-        'total_spent': 95000.0,
-        'purchase_count': 3,
-        'avg_order_value': 31666.67,
-        'products_bought': ['Laptop', 'Mouse', 'Keyboard']
-      },
-      ...
-    }
-
-    Requirements:
-    - Calculate total amount spent per customer
-    - Count number of purchases
-    - Calculate average order value
-    - List unique products bought
-    - Sort by total_spent descending (dict insertion order)
     """
     cust: Dict[str, Dict[str, Any]] = {}
 
@@ -165,11 +118,6 @@ def customer_analysis(transactions: List[Dict[str, Any]]) -> Dict[str, Dict[str,
 def find_peak_sales_day(transactions: List[Dict[str, Any]]) -> Tuple[str, float, int]:
     """
     Identifies the date with highest revenue
-
-    Returns: tuple (date, revenue, transaction_count)
-
-    Expected Output Format:
-    ('2024-12-15', 185000.0, 12)
     """
     per_day: Dict[str, Dict[str, float]] = {}
 
@@ -206,20 +154,6 @@ def find_peak_sales_day(transactions: List[Dict[str, Any]]) -> Tuple[str, float,
 def low_performing_products(transactions: List[Dict[str, Any]], threshold: int = 10) -> List[Tuple[str, int, float]]:
     """
     Identifies products with low sales
-
-    Returns: list of tuples
-
-    Expected Output Format:
-    [
-      ('Webcam', 4, 12000.0),   # (ProductName, TotalQuantity, TotalRevenue)
-      ('Headphones', 7, 10500.0),
-      ...
-    ]
-
-    Requirements:
-    - Find products with total quantity < threshold
-    - Include total quantity and revenue
-    - Sort by TotalQuantity ascending
     """
     agg: Dict[str, Dict[str, float]] = {}
 
